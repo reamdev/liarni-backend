@@ -1,17 +1,34 @@
-import { dbConnection } from '../db'
+import mongoose from 'mongoose'
 
-const userSchema = new dbConnection.Schema({
-	name: String,
-	lastName: String,
+const userSchema = new mongoose.Schema({
+	name: {
+		type: String,
+		required: true,
+		trim: true
+	},
+	lastName: {
+		type: String,
+		required: true,
+		trim: true
+	},
 	birthDate: Date,
-	email: String,
-	password: String,
+	email: {
+		type: String,
+		unique: true,
+		required: true
+	},
+	password: {
+		type: String,
+		required: true
+	},
 	avatar: String,
 	banner: String,
 	biografia: String,
 	ubicacion: String,
 	sitioWeb: String
+}, {
+	timestamps: true
 })
 
 /** Modelo del Usuario de la base de datos de MongoDB */
-export default dbConnection.model('User', userSchema)
+export default mongoose.model('User', userSchema)

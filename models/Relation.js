@@ -1,8 +1,14 @@
 import {dbConnection} from '../db'
 
-const Relation = new dbConnection.Schema({
-    userId: String,
-    userRelationId: String
-})
+const relationSchema = new dbConnection.Schema({
+    userId: {
+        type: dbConnection.Schema.Types.ObjectId,
+        required: true
+    },
+    userRelationId: {
+        type: dbConnection.Schema.Types.ObjectId,
+        required: true
+    }
+}, { _id: false })
 
-export default dbConnection.model('Relation',Relation)
+export default dbConnection.model('Relation', relationSchema)

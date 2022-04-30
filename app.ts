@@ -3,6 +3,7 @@ import morgan from 'morgan'
 import { connectDB } from './db'
 import { appConfig } from './config'
 import { checkDBConnection } from './middlewares'
+import { AuthRouter } from './routers'
 
 const app = express()
 
@@ -18,11 +19,8 @@ app.use(checkDBConnection)
 connectDB()
 
 // Routes
-app.use('/api/v1', express.Router().get('/', (_, res) => {
-	res.status(200).json({
-		message: 'Welcome to the API'
-	})
-}))
+app.use('/', express.Router().get('', (_, res) => res.status(200).json({ message: 'Welcome to the API' })))
+app.use('/auth', AuthRouter)
 
 // Init Server
 app.listen(appConfig.PORT, () => {

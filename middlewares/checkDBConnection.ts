@@ -8,7 +8,7 @@ const checkDBConnection = async (_req: Request, res: Response, next: NextFunctio
 		console.info('DB connection OK')
 		next()
 	} else {
-		res.send('DB connection error')
+		res.json({message: 'DB connection error'})
 	}
 
 }
