@@ -1,2 +1,2 @@
 export { appConfig } from './app'
-export { apiConfig } from './api'
+export { dbConfig } from './db'

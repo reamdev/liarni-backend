@@ -1,1 +1,2 @@
-export { default as validations } from './validations'
+// Validations
+export { validateIfNotEmpty } from './validations'
