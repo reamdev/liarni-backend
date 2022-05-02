@@ -69,5 +69,34 @@ router.post('/login', async (req, res) => {
   }
 })
 
+router.post('/buscarPerfil', async (req, res)=>{
+  try {
+    const { name } = req.body
+
+    if(!name) throw new ValidateError('Tiene que ingresar un nombre')
+    
+    const users = await UserModel.find({name:{ $regex: '.*' + name + '.*', $options: 'i' }})
+
+    for (let index = 0; index < users.length; index++) {
+      users[index].password = ''
+    }
+
+    return res.status(200).json({ message: 'Usuario o usuarios encontrados', users: users })
+    
+  } catch (error) {
+
+    let message = `Error: ${error}`
+    let status = 500
+
+    if (error instanceof ValidateError) {
+      message = firstCharacterUppercase(error.getParameter())
+      status = 400
+    }
+
+    return res.status(status).json({ message: message })
+
+  }
+})
+
 /**Contains user registration and authentication paths */
 export default router
