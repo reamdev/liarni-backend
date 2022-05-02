@@ -1,6 +1,6 @@
-import mongoose from 'mongoose'
+import { dbConnection } from '../db'
 
-const userSchema = new mongoose.Schema({
+const userSchema = new dbConnection.Schema({
 	name: {
 		type: String,
 		required: true,
@@ -31,4 +31,4 @@ const userSchema = new mongoose.Schema({
 })
 
 /** Modelo del Usuario de la base de datos de MongoDB */
-export default mongoose.model('User', userSchema)
+export default dbConnection.model('User', userSchema)

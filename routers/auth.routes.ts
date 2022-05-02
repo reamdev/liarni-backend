@@ -1,24 +1,45 @@
 import express from 'express'
-import User from '../models/User'
+import { createToken } from '../auth'
+import { EncryptError, ValidateError } from '../errors'
+import { UserModel } from '../models'
+import { firstCharacterUppercase, validateEmail, encryptString } from '../utils'
 
 const router = express.Router()
 
 router.post('/register', async (req, res) => {
   try {
-    const newUser = new User(req.body)
+    const newUser = new UserModel(req.body)
 
-    if(!newUser.name || newUser.name.length < 3) res.status(400).json({message: 'El nombre no es válido'})
-    if(!newUser.lastName || newUser.lastName.length < 3) res.status(400).json({message: 'El Apellido no es válido'})
-    if(!newUser.email || newUser.email.length < 3) res.status(400).json({message: 'El Correo no es válido'})
-    if(!newUser.password || newUser.password.length < 3) res.status(400).json({message: 'La Contraseña no es válido'})
+    if (!newUser.name || newUser.name.length < 3) throw new ValidateError('nombre')
+    if (!newUser.lastName || newUser.lastName.length < 3) throw new ValidateError('apellido')
+    if (!newUser.email || !validateEmail(newUser.email)) throw new ValidateError('correo')
+    if (!newUser.password || newUser.password.length < 3) throw new ValidateError('contraseña')
+
+    newUser.password = encryptString(newUser.password)
 
     await newUser.save()
+    const token = createToken(newUser.email)
 
-    res.status(201).json({message: 'register'})
+    return res.status(201).json({ message: 'Cuenta registrada!', token: token })
   } catch (error) {
-    console.log(error)
-    res.status(500).json({message: 'Error: ' + error})
+    let message = `Error: ${error}`
+    let status = 500
+
+    if (String(error).includes('duplicate key error collection')) {
+      message = 'La dirección de correo ya esta registrada'
+      status = 400
+    }
+
+    if (error instanceof ValidateError) {
+      message = firstCharacterUppercase(`${error.getParameter()} no válido`)
+      status = 400
+    }
+
+    if(error instanceof EncryptError) message = error.message
+
+    return res.status(status).json({ message: message })
   }
 })
 
+/**Contains user registration and authentication paths */
 export default router

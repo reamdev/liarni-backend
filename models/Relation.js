@@ -1,4 +1,4 @@
-import {dbConnection} from '../db'
+import { dbConnection } from '../db'
 
 const relationSchema = new dbConnection.Schema({
     userId: {

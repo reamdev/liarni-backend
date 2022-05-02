@@ -1,4 +1,4 @@
-import {dbConnection} from '../db'
+import { dbConnection } from '../db'
 
 const tweetSchema = new dbConnection.Schema({
     userId: {
@@ -17,4 +17,4 @@ const tweetSchema = new dbConnection.Schema({
     timestamps: true
 })
 
-export default dbConnection.model('Tweet',tweetSchema)
+export default dbConnection.model('Tweet', tweetSchema)

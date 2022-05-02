@@ -1,7 +1,7 @@
 import mongoose from 'mongoose'
 import { dbConfig } from '../config'
 
-export let dbConnection: typeof mongoose
+export let dbConnection: typeof mongoose = mongoose
 
 const connectDB = async () => {
 	try {
