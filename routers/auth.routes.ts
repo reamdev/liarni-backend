@@ -1,7 +1,7 @@
 import express from 'express'
 import { createToken } from '../auth'
 import { EncryptError, ValidateError } from '../errors'
-import { UserModel } from '../models'
+import { UserModel, TweetModel } from '../models'
 import { firstCharacterUppercase, validateEmail, encryptString, validateEncrypt } from '../utils'
 
 const router = express.Router()
@@ -94,7 +94,33 @@ router.post('/buscarPerfil', async (req, res)=>{
     }
 
     return res.status(status).json({ message: message })
+    
+  }
+})
 
+/* Agregar un Tweet */
+router.post('/registerTweet', async (req,res)=>{
+  try {
+    const newTweet = new TweetModel(req.body)
+
+    if (!newTweet.userId) throw new ValidateError('userId')
+    if (!newTweet.message || newTweet.message.length < 3) throw new ValidateError('message')
+    if (!newTweet.date) throw new ValidateError('date')
+
+    await newTweet.save()
+
+    return res.status(201).json({ message: 'Tweet registrado!'})
+
+  }catch (error) {
+    let message = `Error: ${error}`
+    let status = 500
+
+    if (error instanceof ValidateError) {
+      message = firstCharacterUppercase(`${error.getParameter()} no válido`)
+      status = 400
+    }
+
+    return res.status(status).json({ message: message })
   }
 })
 
