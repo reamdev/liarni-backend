@@ -3,7 +3,6 @@ import { dbConnection } from '../db'
 const tweetSchema = new dbConnection.Schema({
     userId: {
         type: dbConnection.Schema.Types.ObjectId,
-        required: true
     },
     message: {
         type: String,

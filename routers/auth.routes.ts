@@ -1,10 +1,10 @@
-import express from 'express'
+import { Router } from 'express'
 import { createToken } from '../auth'
 import { EncryptError, ValidateError } from '../errors'
-import { UserModel, TweetModel } from '../models'
+import { UserModel } from '../models'
 import { firstCharacterUppercase, validateEmail, encryptString, validateEncrypt } from '../utils'
 
-const router = express.Router()
+const router = Router()
 
 router.post('/register', async (req, res) => {
   try {
@@ -18,7 +18,7 @@ router.post('/register', async (req, res) => {
     newUser.password = encryptString(newUser.password)
 
     await newUser.save()
-    const token = createToken(newUser.email)
+    const token = createToken(newUser._id)
 
     return res.status(201).json({ message: 'Cuenta registrada!', token: token })
   } catch (error) {
@@ -53,7 +53,7 @@ router.post('/login', async (req, res) => {
     if (!user) throw new ValidateError('No existe un usuario registrado con el correo indicado')
     if (!user.password || !validateEncrypt(password, user.password)) throw new ValidateError('La contraseña es incorrecta')
 
-    const token = createToken(user.email)
+    const token = createToken(user._id)
 
     return res.status(200).json({ message: 'Inicio de sesión exitoso!', token: token })
   } catch (error) {
@@ -61,62 +61,7 @@ router.post('/login', async (req, res) => {
     let status = 500
 
     if (error instanceof ValidateError) {
-      message = firstCharacterUppercase(error.getParameter())
-      status = 400
-    }
-
-    return res.status(status).json({ message: message })
-  }
-})
-
-router.post('/buscarPerfil', async (req, res)=>{
-  try {
-    const { name } = req.body
-
-    if(!name) throw new ValidateError('Tiene que ingresar un nombre')
-    
-    const users = await UserModel.find({name:{ $regex: '.*' + name + '.*', $options: 'i' }})
-
-    for (let index = 0; index < users.length; index++) {
-      users[index].password = ''
-    }
-
-    return res.status(200).json({ message: 'Usuario o usuarios encontrados', users: users })
-    
-  } catch (error) {
-
-    let message = `Error: ${error}`
-    let status = 500
-
-    if (error instanceof ValidateError) {
-      message = firstCharacterUppercase(error.getParameter())
-      status = 400
-    }
-
-    return res.status(status).json({ message: message })
-    
-  }
-})
-
-/* Agregar un Tweet */
-router.post('/registerTweet', async (req,res)=>{
-  try {
-    const newTweet = new TweetModel(req.body)
-
-    if (!newTweet.userId) throw new ValidateError('userId')
-    if (!newTweet.message || newTweet.message.length < 3) throw new ValidateError('message')
-    if (!newTweet.date) throw new ValidateError('date')
-
-    await newTweet.save()
-
-    return res.status(201).json({ message: 'Tweet registrado!'})
-
-  }catch (error) {
-    let message = `Error: ${error}`
-    let status = 500
-
-    if (error instanceof ValidateError) {
-      message = firstCharacterUppercase(`${error.getParameter()} no válido`)
+      message = error.getParameter()
       status = 400
     }
 

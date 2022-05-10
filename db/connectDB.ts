@@ -5,7 +5,15 @@ export let dbConnection: typeof mongoose = mongoose
 
 const connectDB = async () => {
 	try {
-		dbConnection = await mongoose.connect(`mongodb+srv://${dbConfig.USER}:${dbConfig.PASSWORD}@${dbConfig.CLUSTER}.${dbConfig.ATLAS_CODE}.mongodb.net/${dbConfig.DBNAME}?retryWrites=true&w=majority`, {
+		let url = ''
+
+		if (dbConfig.INSTANCE === 'local') {
+			url = `mongodb://localhost/${dbConfig.DBNAME}`
+		} else if(dbConfig.INSTANCE === 'atlas') {
+			url = `mongodb+srv://${dbConfig.USER}:${dbConfig.PASSWORD}@${dbConfig.CLUSTER}.${dbConfig.ATLAS_CODE}.mongodb.net/${dbConfig.DBNAME}?retryWrites=true&w=majority`
+		}
+
+		dbConnection = await mongoose.connect(url, {
 			serverSelectionTimeoutMS: 5000
 		})
 		console.log('DB connected to ', dbConnection.connection.host)
