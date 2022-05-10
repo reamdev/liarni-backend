@@ -1,10 +1,10 @@
-import express from 'express'
+import { Router } from 'express'
 import { createToken } from '../auth'
 import { EncryptError, ValidateError } from '../errors'
 import { UserModel } from '../models'
 import { firstCharacterUppercase, validateEmail, encryptString, validateEncrypt } from '../utils'
 
-const router = express.Router()
+const router = Router()
 
 router.post('/register', async (req, res) => {
   try {
@@ -18,7 +18,7 @@ router.post('/register', async (req, res) => {
     newUser.password = encryptString(newUser.password)
 
     await newUser.save()
-    const token = createToken(newUser.email)
+    const token = createToken(newUser._id)
 
     return res.status(201).json({ message: 'Cuenta registrada!', token: token })
   } catch (error) {
@@ -53,7 +53,7 @@ router.post('/login', async (req, res) => {
     if (!user) throw new ValidateError('No existe un usuario registrado con el correo indicado')
     if (!user.password || !validateEncrypt(password, user.password)) throw new ValidateError('La contraseña es incorrecta')
 
-    const token = createToken(user.email)
+    const token = createToken(user._id)
 
     return res.status(200).json({ message: 'Inicio de sesión exitoso!', token: token })
   } catch (error) {
@@ -61,7 +61,7 @@ router.post('/login', async (req, res) => {
     let status = 500
 
     if (error instanceof ValidateError) {
-      message = firstCharacterUppercase(error.getParameter())
+      message = error.getParameter()
       status = 400
     }
 

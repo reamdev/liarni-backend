@@ -1,2 +1,2 @@
 export { appConfig } from './app'
-export { dbConfig } from './db'
+export { default as dbConfig } from './db'
