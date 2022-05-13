@@ -10,13 +10,13 @@ config()
 let dbConfig: MongoLocalInstance | MongoAtlasInstance = { INSTANCE: 'local', DBNAME: '' }
 const envInstance = validateIfNotEmpty(process.env.MONGO_DB_INSTANCE) ? String(process.env.MONGO_DB_INSTANCE) : ''
 
-if(Object.keys(MongoInstance).includes(envInstance)) {
-  if(MongoInstance.LOCAL == envInstance) {
+if (Object.keys(MongoInstance).includes(envInstance)) {
+  if (MongoInstance.LOCAL === envInstance) {
     dbConfig = {
       INSTANCE: 'local',
       DBNAME: validateIfNotEmpty(process.env.MONGO_DB_DBNAME) ? String(process.env.MONGO_DB_DBNAME) : ''
     }
-  } else if (MongoInstance.ATLAS == envInstance) {
+  } else if (MongoInstance.ATLAS === envInstance) {
     dbConfig = {
       INSTANCE: 'atlas',
       USER: validateIfNotEmpty(process.env.MONGO_DB_USER) ? String(process.env.MONGO_DB_USER) : '',

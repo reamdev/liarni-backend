@@ -16,7 +16,7 @@ app.use(express.urlencoded({ extended: true })) // To parse incoming url-encoded
 app.use(checkDBConnection)
 
 // Database Connection
-connectDB()
+void connectDB()
 
 // Routes
 app.use('/', express.Router().get('', (_, res) => res.status(200).json({ message: 'Welcome to the API' })))
@@ -26,5 +26,5 @@ app.use('/tweet', TweetRouter)
 
 // Init Server
 app.listen(appConfig.PORT, () => {
-	console.log(`Server is listening on port ${appConfig.PORT}`)
+  console.log(`Server is listening on port ${appConfig.PORT}`)
 })

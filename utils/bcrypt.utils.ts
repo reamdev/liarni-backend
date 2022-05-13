@@ -1,5 +1,6 @@
 import bycrypt from 'bcrypt'
 import { EncryptError } from '../errors'
+import { validateIfNotEmpty } from './validations.utils'
 
 export const encryptString = (value: string): string => {
   try {
@@ -11,7 +12,7 @@ export const encryptString = (value: string): string => {
 }
 
 export const validateEncrypt = (value: string, encrypted: string): boolean => {
-  if (!value || !encrypted) return false
+  if (!validateIfNotEmpty(value) || !validateIfNotEmpty(encrypted)) return false
 
   return bycrypt.compareSync(value, encrypted)
 }
