@@ -4,8 +4,7 @@ import { validateIfNotEmpty } from './validations.utils'
 
 export const encryptString = (value: string): string => {
   try {
-    const salt = bycrypt.genSaltSync(10)
-    return bycrypt.hashSync(value, salt)
+    return bycrypt.hashSync(value, 10)
   } catch (err) {
     throw new EncryptError()
   }
