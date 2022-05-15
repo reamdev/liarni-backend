@@ -4,7 +4,7 @@ import JWTError from '../errors/JWTError'
 
 export const createToken = (id: string): string => {
   try {
-    return jwt.sign({ id: id }, appConfig.JWT_SECRET, { expiresIn: '1d' })
+    return jwt.sign({ id: id }, appConfig.JWT_SECRET, { expiresIn: '1w' })
   } catch (error) {
     throw new JWTError('Error al crear el token')
   }
