@@ -1,6 +1,12 @@
 import { dbConnection } from '../db'
 
 const userSchema = new dbConnection.Schema({
+  userName: {
+    type: String,
+    trim: true,
+    unique: true,
+    required: true
+  },
   name: {
     type: String,
     required: true,

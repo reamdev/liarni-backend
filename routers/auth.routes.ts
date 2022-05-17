@@ -11,6 +11,7 @@ router.post('/register', async (req, res) => {
   try {
     const newUser = new UserModel(req.body)
 
+    if (!validateIfNotEmpty(newUser.userName) || newUser.userName.length < 4) throw new ValidateError('user name')
     if (!validateIfNotEmpty(newUser.name) || newUser.name.length < 3) throw new ValidateError('nombre')
     if (!validateIfNotEmpty(newUser.lastName) || newUser.lastName.length < 3) throw new ValidateError('apellido')
     if (!validateIfNotEmpty(newUser.email) || !validateEmail(newUser.email)) throw new ValidateError('correo')
@@ -47,7 +48,6 @@ router.post('/register', async (req, res) => {
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body
-    console.log(email)
 
     if (!validateIfNotEmpty(email) || !validateEmail(email)) throw new ValidateError('El correo no es valido')
     if (password.length < 8) throw new ValidateError('La contraseña debe tener 8 caracteres')

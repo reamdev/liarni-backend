@@ -5,12 +5,20 @@ import { validateIfNotEmpty } from '../utils'
 
 const validateToken = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const token = String(req.headers.authorization).split(' ')[1]
+    const authorizationValue = String(req.headers.authorization)
 
-    if (!validateIfNotEmpty(token)) throw new JWTError('Token no encontrado')
+    console.log(authorizationValue.startsWith('Bearer '))
 
-    if (validateJWT(token)) {
-      next()
+    if (authorizationValue.startsWith('Bearer ')) {
+      const token = authorizationValue.split(' ')[1]
+
+      if (!validateIfNotEmpty(token)) throw new JWTError('Token no encontrado')
+
+      if (validateJWT(token)) {
+        next()
+      } else {
+        throw new JWTError('Token Invalido')
+      }
     } else {
       throw new JWTError('Token Invalido')
     }
