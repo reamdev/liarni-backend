@@ -3,7 +3,7 @@ import { getUserIdByToken } from '../auth/jsonWebToken'
 import { ValidateError } from '../errors'
 import { validateToken } from '../middlewares'
 import { TweetModel } from '../models'
-import { firstCharacterUppercase } from '../utils'
+import { firstCharacterUppercase, validateIfNotEmpty } from '../utils'
 
 const router = Router()
 
@@ -11,19 +11,21 @@ const router = Router()
 router.use(validateToken)
 
 /* Agregar un Tweet */
-router.post('/', async (req, res)=>{
+// eslint-disable-next-line @typescript-eslint/no-misused-promises
+router.post('/', async (req, res) => {
   try {
     const newTweet = new TweetModel(req.body)
 
-    if (!newTweet.message || newTweet.message.length < 3) throw new ValidateError('message')
+    if (!validateIfNotEmpty(newTweet.message) || newTweet.message.length < 3) throw new ValidateError('message')
 
     newTweet.userId = getUserIdByToken(String(req.headers.authorization).split(' ')[1])
-    if (!newTweet._id || newTweet._id.length < 5) throw new ValidateError('Token con datos invalidos')
+    if (!validateIfNotEmpty(newTweet._id) || newTweet._id.length < 5) throw new ValidateError('Token con datos invalidos')
 
     await newTweet.save()
 
-    return res.status(201).json({ message: 'Tweet registrado!'})
+    return res.status(201).json({ message: 'Tweet registrado!' })
   } catch (error) {
+    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
     let message = `Error: ${error}`
     let status = 500
 

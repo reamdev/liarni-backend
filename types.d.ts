@@ -1,9 +1,9 @@
-export type MongoLocalInstance = {
+export interface MongoLocalInstance {
   INSTANCE: 'local'
   DBNAME: string
 }
 
-export type MongoAtlasInstance = {
+export interface MongoAtlasInstance {
   INSTANCE: 'atlas'
   USER: string
   PASSWORD: string
