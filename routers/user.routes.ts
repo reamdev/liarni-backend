@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/restrict-plus-operands */
 import { Router } from 'express'
 import { ValidateError } from '../errors'
 import { validateToken } from '../middlewares'
@@ -10,10 +11,18 @@ router.use(validateToken)
 // eslint-disable-next-line @typescript-eslint/no-misused-promises
 router.get('/', async (req, res) => {
   try {
-    const { name } = req.query
+    const searchValue = String(req.query.searchValue)
 
     // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-    const users = await UserModel.find({ $or: [{ name: { $regex: '.*' + name + '.*', $options: 'i' } }, { lastName: { $regex: '.*' + name + '.*', $options: 'i' } }] })
+    let users: any[]
+
+    if (searchValue[0] === '@') {
+      const userNameSearch = searchValue.slice(1)
+
+      users = await UserModel.find({ userName: { $regex: '.*' + userNameSearch + '.*', $options: 'i' } })
+    } else {
+      users = await UserModel.find({ $or: [{ name: { $regex: '.*' + searchValue + '.*', $options: 'i' } }, { lastName: { $regex: '.*' + searchValue + '.*', $options: 'i' } }, { userName: { $regex: '.*' + searchValue + '.*', $options: 'i' } }] })
+    }
 
     for (let index = 0; index < users.length; index++) {
       users[index].password = ''
