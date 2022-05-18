@@ -3,6 +3,7 @@ import { Router } from 'express'
 import { ValidateError } from '../errors'
 import { validateToken } from '../middlewares'
 import { UserModel } from '../models'
+import { validateIfNotEmpty } from '../utils'
 
 const router = Router()
 
@@ -11,7 +12,7 @@ router.use(validateToken)
 // eslint-disable-next-line @typescript-eslint/no-misused-promises
 router.get('/', async (req, res) => {
   try {
-    const searchValue = String(req.query.searchValue)
+    const searchValue = validateIfNotEmpty(req.query.searchValue) ? String(req.query.searchValue) : ''
 
     // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
     let users: any[]
