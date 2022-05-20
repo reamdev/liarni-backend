@@ -79,4 +79,38 @@ router.delete('/', async (req, res) => {
   }
 })
 
+// Consultar una relacion
+// eslint-disable-next-line @typescript-eslint/no-misused-promises
+router.get('/', async (req, res) => {
+  try {
+    const userRelationId = String(req.query.id)
+    let valor: boolean = true
+    const userId = getUserIdByToken(String(req.headers.authorization))
+    const consultaRelation: any = await RelationModel.findOne({ $and: [{ userId: userId }, { userRelationId: userRelationId }] })
+    console.log(consultaRelation)
+    if (validateIfNotEmpty(consultaRelation)) {
+      return res.status(200).json({ status: valor, user: consultaRelation })
+    } else {
+      valor = false
+      return res.status(200).json({ status: valor })
+    }
+  } catch (error) {
+    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+    let message = String(error)
+    let status = 500
+
+    if (error instanceof TweetError) {
+      message = error.message
+      status = error.getStatus()
+    }
+
+    if (message.startsWith('CastError: ')) {
+      message = 'Ocurrio un error al dejar de seguir al usuario'
+      status = 409
+    }
+
+    return res.status(status).json({ message: message })
+  }
+})
+
 export default router
