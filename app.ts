@@ -9,7 +9,7 @@ import cors from 'cors'
 const app = express()
 
 // Middlewares
-app.use(cors({ origin: 'http://localhost:3000' }))
+app.use(cors({ origin: ['http://localhost:3000', 'https://reamdev.github.io'] }))
 app.use(morgan('dev'))
 app.use(express.json()) // For transform req.body to json
 app.use(express.urlencoded({ extended: true })) // To parse incoming url-encoded requests
