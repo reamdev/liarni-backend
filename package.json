@@ -6,6 +6,7 @@
   "license": "MIT",
   "private": true,
   "scripts": {
+    "build": "tsc --build tsconfig.json",
     "start": "node ./build/app.js",
     "test": "tsc && jest ./build",
     "dev": "ts-node-dev app.ts",
