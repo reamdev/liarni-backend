@@ -23,7 +23,7 @@ export const validateJWT = (token: string): boolean => {
 }
 
 export const getUserIdByToken = (token: string): string => {
-  const decoded = jwt.decode(token, { complete: true })
+  const decoded = token.startsWith('Bearer ') ? jwt.decode(token.split(' ')[1], { complete: true }) : jwt.decode(token, { complete: true })
 
   return (decoded != null) ? Object.values(decoded.payload)[0] : ''
 }

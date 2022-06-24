@@ -9,6 +9,6 @@ const relationSchema = new dbConnection.Schema({
     type: dbConnection.Schema.Types.ObjectId,
     required: true
   }
-}, { _id: false })
+})
 
 export default dbConnection.model('Relation', relationSchema)

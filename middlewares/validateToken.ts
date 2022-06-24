@@ -7,8 +7,6 @@ const validateToken = async (req: Request, res: Response, next: NextFunction): P
   try {
     const authorizationValue = String(req.headers.authorization)
 
-    console.log(authorizationValue.startsWith('Bearer '))
-
     if (authorizationValue.startsWith('Bearer ')) {
       const token = authorizationValue.split(' ')[1]
 

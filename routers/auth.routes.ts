@@ -70,6 +70,8 @@ router.post('/login', async (req, res) => {
       status = 400
     }
 
+    await new Promise(resolve => setTimeout(resolve, 4000))
+
     return res.status(status).json({ message: message })
   }
 })
