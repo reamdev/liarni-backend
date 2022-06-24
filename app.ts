@@ -3,7 +3,7 @@ import morgan from 'morgan'
 import { connectDB } from './db'
 import { appConfig } from './config'
 import { checkDBConnection } from './middlewares'
-import { AuthRouter, TweetRouter, UserRouter } from './routers'
+import { AuthRouter, TweetRouter, UserRouter, RelationRouter } from './routers'
 import cors from 'cors'
 
 const app = express()
@@ -25,6 +25,7 @@ app.use('/', express.Router().get('', (_, res) => res.status(200).json({ message
 app.use('/auth', AuthRouter)
 app.use('/user', UserRouter)
 app.use('/tweet', TweetRouter)
+app.use('/relation', RelationRouter)
 
 // Init Server
 app.listen(appConfig.PORT, () => {
