@@ -17,7 +17,7 @@ router.post('/', async (req, res) => {
   try {
     const newTweet = new TweetModel(req.body)
 
-    if (!validateIfNotEmpty(newTweet.message) || newTweet.message.length < 3) throw new ValidateError('message')
+    if (!validateIfNotEmpty(newTweet.message) || newTweet.message.length === 0) throw new ValidateError('message')
 
     newTweet.userId = getUserIdByToken(String(req.headers.authorization))
     if (!validateIfNotEmpty(newTweet._id) || newTweet._id.length < 5) throw new ValidateError('Token con datos invalidos')
@@ -71,7 +71,23 @@ router.get('/getTweetByUserId', async (req, res) => {
 // eslint-disable-next-line @typescript-eslint/no-misused-promises
 router.get('/', async (_, res) => {
   try {
-    const tweets: any[] = await TweetModel.find().sort({ date: -1 })
+    // const tweets: any[] = await TweetModel.find().sort({ date: -1 })
+    const tweets: any[] = await TweetModel.aggregate([
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'userId',
+          foreignField: '_id',
+          as: 'user'
+        }
+      },
+      { $unwind: '$user' },
+      { $sort: { date: -1 } }
+    ])
+
+    tweets.forEach(tweet => {
+      tweet.user.password = ''
+    })
 
     return res.status(200).json({ tweets: tweets })
   } catch (error) {

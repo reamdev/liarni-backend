@@ -46,6 +46,50 @@ router.get('/', async (req, res) => {
   }
 })
 
+router.get('/get-data', async (req, res) => {
+  try {
+    // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
+    const user = await UserModel.findOne({ _id: getUserIdByToken(String(req.headers.authorization)) })
+
+    user.password = ''
+
+    return res.status(200).json(user)
+  } catch (error) {
+    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+    let message = `Error: ${error}`
+    let status = 500
+
+    if (error instanceof ValidateError) {
+      message = error.getParameter()
+      status = 400
+    }
+
+    return res.status(status).json({ message: message })
+  }
+})
+
+router.get('/get-username-data', async (req, res) => {
+  try {
+    // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
+    const user = await UserModel.findOne({ userName: String(req.query.userName) })
+
+    user.password = ''
+
+    return res.status(200).json(user)
+  } catch (error) {
+    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+    let message = `Error: ${error}`
+    let status = 500
+
+    if (error instanceof ValidateError) {
+      message = error.getParameter()
+      status = 400
+    }
+
+    return res.status(status).json({ message: message })
+  }
+})
+
 // obtener una lista de usuarios que sigues o no dependiendo si pones el nombre de la persona o nada en la barra de busqueda
 // eslint-disable-next-line @typescript-eslint/no-misused-promises
 router.get('/SearchFollowOrNewUser', async (req, res) => {
@@ -98,6 +142,27 @@ router.get('/SearchFollowOrNewUser', async (req, res) => {
     }
 
     return res.status(status).json({ message: message })
+  }
+})
+
+router.put('/', async (req, res) => {
+  try {
+    const { name, lastName, biography, ubication, webSite } = req.body
+    const userId = getUserIdByToken(String(req.headers.authorization))
+
+    await UserModel.findOneAndUpdate({ _id: userId }, {
+      $set: {
+        name: name,
+        lastName: lastName,
+        biografia: biography,
+        ubicacion: ubication,
+        sitioWeb: webSite
+      }
+    })
+    return res.status(200).json({ message: 'Actualizacion correcta!' })
+  } catch (error) {
+    console.log(error)
+    return res.status(400).json({ message: 'Error al actualizar datos' })
   }
 })
 
