@@ -4,6 +4,7 @@ import { connectDB } from './db'
 import { appConfig } from './config'
 import { checkDBConnection } from './middlewares'
 import { AuthRouter, TweetRouter, UserRouter, RelationRouter } from './routers'
+import fileUpload from 'express-fileupload'
 import cors from 'cors'
 
 const app = express()
@@ -13,6 +14,7 @@ app.use(cors({ origin: ['http://localhost:3000', 'https://reamdev.github.io'] })
 app.use(morgan('dev'))
 app.use(express.json()) // For transform req.body to json
 app.use(express.urlencoded({ extended: true })) // To parse incoming url-encoded requests
+app.use(fileUpload()) // To parse incoming file uploads
 
 // Own Middleware
 app.use(checkDBConnection)
